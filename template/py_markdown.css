@@ -1,0 +1,30 @@
+body{
+    width: 80%;
+    margin-left: 10%;
+    background-color: rgb(49, 48, 48);
+    font-family: sans-serif;
+    font-weight: lighter;
+    letter-spacing: 3px;
+}
+
+h1{
+    padding-left: 10px;
+    width: 100%;
+    color:rgb(238, 238, 153);
+    font-size: 40px;
+    font-weight: lighter;
+    border-left: 5px dotted;
+    border-bottom: 5px dotted;
+}
+
+h2{
+    padding-left: 10px;
+    width: 80%;
+    color:rgb(238, 238, 153);
+    font-weight: lighter;
+    border-bottom: 5px dotted;
+}
+
+li{
+    color: rgb(230, 224, 150);
+}
