@@ -22,6 +22,6 @@ def md_making(md_url, css_url):
     # </html>挿入
     html += '</html>'
 
-    # htmlをhtmlファイルに書き込み
-    with open('test.html', 'w', encoding='utf-8', errors='xmlcharrefreplace') as output_file:
-        output_file.write(html)
+    return html
+
+    
