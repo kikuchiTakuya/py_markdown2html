@@ -1,46 +1,62 @@
 # 標準ライブラリ
 import tkinter as tk
 from tkinter import font
-from turtle import back, bgcolor
+import ctypes
+
 
 # 自作ライブラリ
 from original_module import md_maker
 from original_module import find_files as ff
 
+# dpi調整
+ctypes.windll.shcore.SetProcessDpiAwareness(1)
+
+# 色設定
+bg_main = "#414141"
+bg_btn = "#252525"
+txt_yellow = "#d1d93d"
+txt_white = "#788020"
+error_txt = "#f57373"
+succes_txt = "#73f587"
+
 # 各種ウィジットの関数
 def find_md(event):
     path_txt = ff.find_file('*.md')
-    md_entry.configure(state="normal")
-    md_entry.delete(0, tk.END)
-    md_entry.insert(tk.END, str(path_txt[0]))
-    md_entry.configure(state="readonly")
-
+    output2entry(event, md_entry, path_txt[0])
+    
 def find_css(event):
     path_txt = ff.find_file('*.css')
-    css_entry.configure(state="normal")
-    css_entry.delete(0, tk.END)
-    css_entry.insert(tk.END, str(path_txt[0]))
-    css_entry.configure(state="readonly")
+    output2entry(event, css_entry, path_txt[0])
+    
+
+def output2entry(event,entry, txt):
+    entry.configure(state="normal")
+    entry.delete(0, tk.END)
+    entry.insert(tk.END, txt)
+    entry.configure(state="readonly")
+    event.widget['relief'] = "flat"
 
 def exe(event):
     md = md_entry.get()
     css = css_entry.get()
     if md == "" and css == "":
+        exe_label.configure(fg=error_txt)
         exe_txt.set("You have to read md file and css file.")
         return False
     elif md == "" and css != "":
+        exe_label.configure(fg=error_txt)
         exe_txt.set("You have to read md file.")
         return False
     elif md != "" and css == "":
+        exe_label.configure(fg=error_txt)
         exe_txt.set("You have to read css file.")
         return False
     else:
         html = md_maker.md_making(md, css)
         output_path = ff.save_file_path()
-        # output_path = dic + '/test.html'
-        # htmlをhtmlファイルに書き込み
         with open(output_path, 'w', encoding='utf-8', errors='xmlcharrefreplace') as output_file:
             output_file.write(html)
+        exe_label.configure(fg=succes_txt)
         exe_txt.set("[Succes] : " + output_path)
         return True
 
@@ -52,23 +68,13 @@ def hover_out(event):
     event.widget['bg'] = bg_btn
     event.widget['fg'] = txt_yellow
 
-# 色設定
-bg_main = "#414141"
-bg_btn = "#252525"
-txt_yellow = "#d1d93d"
-txt_white = "#788020"
-
 
 # rootメインウィンドウの設定
 root = tk.Tk()
 root.title("Markdown Maker")
-root.geometry("800x400")
+root.geometry("1600x600")
 root.configure(bg=bg_main)
-
-# ショートカットキーの設定
-root.bind_all('<Control-Key-1>', find_md)
-root.bind_all('<Control-Key-2>', find_css)
-root.bind_all('<Control-Enter>', exe)
+# root.tk.call('tk', 'scaling', 1.2)
 root.option_add("*font", ["Yu Gothic UI",12])
 
 # メインフレームの作成と設置
@@ -80,10 +86,14 @@ frame.configure(bg="#414141")
 exe_txt = tk.StringVar()
 exe_txt.set("read a markdown file and css file.")
 
+# ウィジットの幅設定
+entry_width = 50
+btn_width = 20
+
 # 各種ウィジットの作成
 md_entry = tk.Entry(
     frame, 
-    width = 60,
+    width = entry_width,
     state = "readonly",
     relief = "flat",
     )
@@ -91,7 +101,7 @@ md_entry = tk.Entry(
 md_read_btn = tk.Button(
     frame, 
     text = "read md file  (Ctrl+1)", 
-    width = 20,
+    width = btn_width,
     bg = bg_btn,
     fg = txt_yellow,
     relief = "flat",
@@ -99,7 +109,7 @@ md_read_btn = tk.Button(
 
 css_entry = tk.Entry(
     frame, 
-    width = 60,
+    width = entry_width,
     state = "readonly",
     relief = "flat",
     )
@@ -107,7 +117,7 @@ css_entry = tk.Entry(
 css_read_btn = tk.Button(
     frame, 
     text = "read css file (Ctrl+2)", 
-    width = 20, 
+    width = btn_width, 
     bg = bg_btn,
     fg = txt_yellow,
     relief = "flat",
@@ -115,7 +125,7 @@ css_read_btn = tk.Button(
 
 exe_label = tk.Label(
     frame,
-    width = 60,
+    width = entry_width,
     bg = bg_main,
     fg = "#f4f4f4",
     textvariable = exe_txt
@@ -123,8 +133,8 @@ exe_label = tk.Label(
 
 exe_btn = tk.Button(
     frame, 
-    text = "run      (Ctrl+Enter)",
-    width = 20,
+    text = "run      (Ctrl+r)",
+    width = btn_width,
     bg = bg_btn,
     fg = txt_yellow,
     relief = "flat",
@@ -140,6 +150,11 @@ css_read_btn.bind("<Leave>", hover_out)
 exe_btn.bind("<Button-1>", exe)
 exe_btn.bind("<Enter>", hover_in)
 exe_btn.bind("<Leave>", hover_out)
+
+# ショートカットキーの設定
+root.bind_all('<Control-Key-1>', find_md)
+root.bind_all('<Control-Key-2>', find_css)
+root.bind_all('<Control-Key-r>', exe)
 
 
 # 各種ウィジットの設置
